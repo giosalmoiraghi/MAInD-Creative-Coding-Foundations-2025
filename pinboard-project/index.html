@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinboard</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="list-view">
+  <div class="container">
+    <h1>Pinboard</h1>
+
+    <div class="controls">
+      <label for="colorPicker">Color:</label>
+      <input type="color" id="colorPicker" value="#f2f2f2">
+
+      <label for="sizePicker">Size:</label>
+      <select id="sizePicker">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+      </select>
+    </div>
+
+    <input id="userInput" type="text" placeholder="Type and press Enter">
+
+    <div class="view-buttons">
+      <button id="listViewBtn" class="active">List view</button>
+      <button id="cardViewBtn">Card view</button>
+    </div>
+
+    <ul id="board" class="board"></ul>
+  </div>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
+
+

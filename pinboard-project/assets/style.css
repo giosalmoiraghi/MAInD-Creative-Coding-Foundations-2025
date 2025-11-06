@@ -1,0 +1,221 @@
+body {
+  background: #f2f2f2;
+  color: #0d0d0d;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 700px; 
+  box-sizing: border-box;
+  overflow: hidden; 
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #a79bf2;
+}
+
+input#userInput {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 80%;
+  max-width: 600px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #a79bf2;
+  background-color: #f2f2f2;
+  color: #0d0d0d;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 15px auto;
+  flex-wrap: wrap;
+  width: 90%;
+  max-width: 600px;
+  background: linear-gradient(135deg, #e2f26b, #a79bf2);
+  border-radius: 12px;
+  padding: 10px 15px;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+}
+
+.controls label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.controls input[type="color"],
+.controls select {
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #a79bf2;
+  cursor: pointer;
+  background-color: #f2f2f2;
+  color: #0d0d0d;
+}
+
+.view-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  justify-content: center;
+}
+
+button {
+  padding: 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #a79bf2;
+  background: #f2f2f2;
+  color: #0d0d0d;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.active {
+  background-color: #e2f26b;
+}
+
+button:hover {
+  background-color: #a79bf2;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.board li {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #f2f2f2;
+  border: 1px solid #a79bf2;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  color: #0d0d0d;
+  padding: 10px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.board li:hover {
+  transform: scale(1.05);
+  background-color: #e2f26b;
+}
+
+body.card-view .board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  align-items: start;
+  justify-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body.card-view .board li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a79bf2; 
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  visibility: hidden; 
+  transition: visibility 0.2s ease;
+}
+
+.board li:hover .delete-btn {
+  visibility: visible;
+  transition: transform 0.2s ease, 
+  background-color 0.2s ease, 
+  box-shadow 0.2s ease;
+}
+
+.delete-btn:hover,
+.delete-btn:active {
+  color: #a79bf2;
+  background: none;
+  transform: translateY(-50%);
+}
+
+
+.small {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.medium {
+  font-size: 18px;
+  padding: 12px 20px;
+}
+
+.large {
+  font-size: 24px;
+  padding: 20px 30px;
+}
+
+.delete-btn:hover {
+  background: none;
+  transform: none;
+}
+
+.board li:hover {
+  background-color: #f2f2f2; 
+  transform: translateY(-3px) scale(1.02); 
+  background-color: #e2f26b; 
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 600px) {
+  body.card-view .board {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .container {
+    max-width: 95%;
+  }
+}
