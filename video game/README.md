@@ -35,4 +35,5 @@ Arcade game where a penguin jumps to avoid snow piles. It features progressive l
 
 ## Game Flow Diagram
 
+
 ![Game Flow Diagram](diagram.png)
