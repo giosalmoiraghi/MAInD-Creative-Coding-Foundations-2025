@@ -16,7 +16,9 @@ The application **must** have those requirements:
 
 **Screenshots:**  
 
-![Gameplay Screenshot 1](doc/screen assignment 03.jpg) ![Screen 2](doc/screen 2 assignment 03.jpg)
+| Gameplay Screenshot 1 | Gameplay Screenshot 2 |
+| :---: | :---: |
+| ![Gameplay Screenshot 1](doc/screen assignment 03.jpg) | ![Screen 2](doc/screen 2 assignment 03.jpg) |
 
 **Short project description:**  
 Arcade game where a penguin collects fish while avoiding falling obstacles. The game integrates weather data from OpenWeatherMap to change the background based on temperature. The player can move the penguin using the arrow keys or by dragging it with the mouse. Score increases by collecting fish, and every 10 points the level rises, increasing obstacle speed. Colliding with a danger ends the game with a game over message and option to restart.
