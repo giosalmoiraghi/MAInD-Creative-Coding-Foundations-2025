@@ -1,201 +1,185 @@
-/* --------------------
-    SISTEMA METEO
-----------------------*/
+const MY_API_KEY = ""; 
+const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
-// Cambia fittiziamente meteo + sfondo del gioco
 const weatherInfo = document.getElementById("weatherInfo");
 const cityButtons = document.querySelectorAll(".city-btn");
 const game = document.querySelector(".game");
 
-cityButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const city = btn.dataset.city;
+let dangerShape = "snow-square";
 
-        // METEO FINTI (poi mettiamo l’API)
-        let temp = Math.floor(Math.random() * 15) + 5;
+function updateGameWeatherByTemp(temp){
+    game.classList.remove("weather-snow","weather-clouds","weather-clear");
+    if(temp<5){ game.classList.add("weather-snow"); dangerShape="snow-square"; }
+    else if(temp<=20){ game.classList.add("weather-clouds"); dangerShape="clouds-square"; }
+    else{ game.classList.add("weather-clear"); dangerShape="clear-square"; }
+}
 
-        weatherInfo.textContent = `${city}: ${temp}°C`;
+function fetchWeather(city){
+    const API_URL=`${BASE_URL}?q=${city}&appid=${MY_API_KEY}&units=metric`;
+    fetch(API_URL)
+        .then(res=>res.ok?res.json():Promise.reject())
+        .then(data=>{
+            const temp=Math.round(data.main.temp);
+            weatherInfo.textContent=`${city}: ${temp}°C`;
+            updateGameWeatherByTemp(temp);
+        })
+        .catch(()=>{
+            weatherInfo.textContent=`${city}: data not available`;
+            updateGameWeatherByTemp(15);
+        });
+}
 
-        // CAMBIO SFONDO DEL GIOCO
-        if (temp < 8) {
-            game.style.backgroundImage = "url('img/snow.png')";
-        } else if (temp < 15) {
-            game.style.backgroundImage = "url('img/nuvole sfondo.png')";
-        } else {
-            game.style.backgroundImage = "url('img/sole.png')";
-        }
-    });
-});
+cityButtons.forEach(btn=>btn.addEventListener("click",()=>fetchWeather(btn.dataset.city)));
 
-
-/* --------------------
-     IL TUO GIOCO
-----------------------*/
 
 const penguin = document.querySelector('.penguin');
 const gameOverText = document.getElementById("gameOverText");
 const restartButton = document.getElementById("restartButton");
-
-const levelUpText = document.createElement('div');
-levelUpText.style.position = 'absolute';
-levelUpText.style.top = '5px';
-levelUpText.style.width = '100%';
-levelUpText.style.textAlign = 'center';
-levelUpText.style.fontFamily = "'WinterDay'";
-levelUpText.style.fontSize = '30px';
-levelUpText.style.color = '#003366';
-levelUpText.style.textShadow = '2px 2px 4px #fff';
-levelUpText.style.opacity = '0';
-levelUpText.style.transition = 'opacity 0.5s ease';
-game.appendChild(levelUpText);
-
-let isJumping = false;
-let gameRunning = true;
-let isHolding = false;
-let maxJump = 160;
-
-penguin.style.bottom = '0px';
-
-const levels = [
-    { speed: 5, interval: 2000, duration: 15, obstacles: 1 },
-    { speed: 8, interval: 1800, duration: 20, obstacles: 2 },
-    { speed: 12, interval: 1500, duration: 25, obstacles: 3 }
-];
-
-let currentLevel = 0;
-let obstacleSpeed = levels[currentLevel].speed;
-let obstacleInterval = levels[currentLevel].interval;
-let obstaclesPerWave = levels[currentLevel].obstacles;
-
+const startButton = document.getElementById("startButton");
+const startScreen = document.getElementById("startScreen");
 const gameOverSound = new Audio('sound/game over.wav');
 
-function showLevelUp(level) {
-    levelUpText.textContent = `LEVEL ${level}`;
-    levelUpText.style.opacity = '1';
-    setTimeout(() => { levelUpText.style.opacity = '0'; }, 2500);
-}
+let gameRunning=false, score=0, level=1, fallSpeed=4;
+let penguinX = 50;
 
-function nextLevel() {
-    if (!gameRunning) return;
 
-    if (currentLevel < levels.length - 1) {
-        currentLevel++;
-        obstacleSpeed = levels[currentLevel].speed;
-        obstacleInterval = levels[currentLevel].interval;
-        obstaclesPerWave = levels[currentLevel].obstacles;
-        showLevelUp(currentLevel + 1);
+const hud = document.createElement("div");
+hud.style.position="absolute";
+hud.style.top="5px";
+hud.style.left="10px";
+hud.style.fontSize="16px";
+hud.style.fontFamily="Arial";
+hud.style.color="#003366";
+game.appendChild(hud);
 
-        setTimeout(() => { if (gameRunning) nextLevel(); }, levels[currentLevel].duration * 1000);
-    }
-}
+function updateHUD(){ hud.textContent=`Score: ${score} | Level: ${level}`; }
 
-setTimeout(nextLevel, levels[currentLevel].duration * 1000);
 
-function jump() {
-    if (isJumping || !gameRunning) return;
+document.addEventListener('keydown', e=>{
+    if(!gameRunning) return;
+    if(['ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
+    if(e.code==='ArrowLeft') penguinX -= 25;
+    if(e.code==='ArrowRight') penguinX += 25;
+    penguinX = Math.max(0, Math.min(game.clientWidth - penguin.offsetWidth, penguinX));
+    penguin.style.left = penguinX+'px';
+});
 
-    isJumping = true;
-    let jumpHeight = 0;
 
-    let upInterval = setInterval(() => {
-        let bottom = parseInt(penguin.style.bottom);
+let isDragging = false;
 
-        if (jumpHeight >= 80) {
-            clearInterval(upInterval);
+penguin.addEventListener('mousedown', () => { isDragging = true; });
+document.addEventListener('mousemove', e => {
+    if(!gameRunning || !isDragging) return;
+    const rect = game.getBoundingClientRect();
+    let newX = e.clientX - rect.left - penguin.offsetWidth / 2;
+    newX = Math.max(0, Math.min(game.clientWidth - penguin.offsetWidth, newX));
+    penguin.style.left = newX + 'px';
+});
+document.addEventListener('mouseup', () => { isDragging = false; });
 
-            let holdInterval = setInterval(() => {
-                bottom = parseInt(penguin.style.bottom);
 
-                if (!isHolding || jumpHeight >= maxJump) {
-                    clearInterval(holdInterval);
+penguin.addEventListener('touchstart', () => { isDragging = true; });
+document.addEventListener('touchmove', e => {
+    if(!gameRunning || !isDragging) return;
+    const touch = e.touches[0];
+    const rect = game.getBoundingClientRect();
+    let newX = touch.clientX - rect.left - penguin.offsetWidth / 2;
+    newX = Math.max(0, Math.min(game.clientWidth - penguin.offsetWidth, newX));
+    penguin.style.left = newX + 'px';
+});
+document.addEventListener('touchend', () => { isDragging = false; });
 
-                    let downInterval = setInterval(() => {
-                        bottom = parseInt(penguin.style.bottom);
 
-                        if (bottom <= 0) {
-                            clearInterval(downInterval);
-                            isJumping = false;
-                            penguin.style.bottom = '0px';
-                        } else {
-                            penguin.style.bottom = (bottom - 5) + 'px';
-                        }
-                    }, 20);
+function spawnObject(){
+    if(!gameRunning) return;
 
-                } else {
-                    penguin.style.bottom = (bottom + 5) + 'px';
-                    jumpHeight += 5;
+    const obj = document.createElement('div');
+    obj.classList.add('falling');
+
+    const type = Math.random()<0.6?"fish":"danger";
+    if(type==="fish") obj.classList.add('fish');
+    else { obj.classList.add('danger'); obj.dataset.shape=dangerShape; }
+
+    const x = Math.random()*(game.clientWidth - 40);
+    obj.style.left = x+'px';
+    obj.style.top = '-40px';
+    game.appendChild(obj);
+
+    let y=-40;
+    const fall = setInterval(()=>{
+        if(!gameRunning){ clearInterval(fall); obj.remove(); return; }
+        y+=fallSpeed;
+        if(y + obj.offsetHeight > game.clientHeight) y = game.clientHeight - obj.offsetHeight;
+        obj.style.top = y+'px';
+
+        const penguinRect = penguin.getBoundingClientRect();
+        const objRect = obj.getBoundingClientRect();
+        const overlap = !(penguinRect.right<objRect.left || penguinRect.left>objRect.right || penguinRect.bottom<objRect.top || penguinRect.top>objRect.bottom);
+
+        if(overlap){
+            clearInterval(fall);
+            if(obj.classList.contains('fish')){
+                score++;
+                updateHUD();
+                if(score % 10 === 0){
+                    level++;
+                    fallSpeed += 2; 
+                    showLevel(level);
                 }
-
-            }, 20);
-
-        } else {
-            penguin.style.bottom = (bottom + 5) + 'px';
-            jumpHeight += 5;
+            } else endGame();
+            obj.remove();
         }
-    }, 20);
+
+        if(y >= game.clientHeight - obj.offsetHeight){
+            clearInterval(fall);
+            obj.remove();
+        }
+    },20);
+
+    setTimeout(spawnObject, 500);
 }
 
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-        isHolding = true;
-        jump();
-    }
-});
 
-document.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') {
-        isHolding = false;
-    }
-});
+const levelText = document.createElement('div');
+levelText.style.position = 'absolute';
+levelText.style.top = '-40px';
+levelText.style.width = '100%';
+levelText.style.textAlign = 'center';
+levelText.style.fontFamily = "'WinterDay'";
+levelText.style.fontSize = '30px';
+levelText.style.color = '#003366';
+levelText.style.textShadow = '2px 2px 4px #fff';
+levelText.style.opacity = '0';
+levelText.style.transition = 'opacity 0.5s ease';
+game.appendChild(levelText);
 
-function createObstacle() {
-    if (!gameRunning) return;
-
-    for (let i = 0; i < obstaclesPerWave; i++) {
-        const obstacle = document.createElement('div');
-        obstacle.classList.add('obstacle');
-        obstacle.style.left = (800 + i * 100) + 'px';
-        game.appendChild(obstacle);
-
-        let moveObstacle = setInterval(() => {
-            if (!gameRunning) {
-                clearInterval(moveObstacle);
-                return;
-            }
-
-            let obstacleLeft = parseInt(obstacle.style.left);
-            let penguinBottom = parseInt(penguin.style.bottom);
-
-            if (obstacleLeft > 50 && obstacleLeft < 100 && penguinBottom < 25) {
-                clearInterval(moveObstacle);
-                gameOver();
-                return;
-            }
-
-            if (obstacleLeft < -150) {
-                clearInterval(moveObstacle);
-                obstacle.remove();
-            } else {
-                obstacle.style.left = (obstacleLeft - obstacleSpeed) + 'px';
-            }
-        }, 20);
-    }
-
-    setTimeout(createObstacle, obstacleInterval);
+function showLevel(l){
+    levelText.textContent=`LEVEL ${l}`;
+    levelText.style.opacity='1';
+    setTimeout(()=>levelText.style.opacity='0',2000);
 }
 
-function gameOver() {
-    gameRunning = false;
+
+function startGame(){
+    startScreen.style.display='none';
+    gameOverText.classList.remove('show');
+    restartButton.style.display='none';
+    gameRunning=true; score=0; level=1; fallSpeed=4;
+    penguinX = 50;
+    penguin.style.left = penguinX+'px';
+    updateHUD();
+    spawnObject();
+}
+
+startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', startGame);
+
+
+function endGame(){
+    gameRunning=false;
+    gameOverSound.currentTime=0;
     gameOverSound.play();
-    gameOverText.classList.remove("hidden");
-
-    setTimeout(() => {
-        gameOverText.classList.add("show");
-    }, 50);
+    gameOverText.classList.remove('hidden');
+    restartButton.style.display='block';
+    setTimeout(()=>gameOverText.classList.add('show'),50);
 }
-
-restartButton.addEventListener("click", () => {
-    location.reload();
-});
-
-createObstacle();
