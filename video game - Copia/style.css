@@ -1,0 +1,197 @@
+@font-face {
+    font-family: 'WinterDay';
+    src: url('font/Winter Day.otf') format('opentype');
+}
+
+body {
+    margin: 0;
+    background-color: #aee1f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.layout {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+
+.weather-box {
+    width: 200px;
+    padding: 15px;
+    background:#e0f7fa;
+    border: 1px solid #003366;
+    border-radius: 10px;
+    font-family: Arial;
+    backdrop-filter: blur(5px);
+    text-align: center;
+}
+.weather-box h2 {
+    color: #003366;     
+    font-weight: bold;  
+}
+
+.city-buttons button {
+    margin: 5px 0;
+    width: 100%;
+    padding: 8px;
+    background: #0055aa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.city-buttons button:hover {
+    background: #003366;
+}
+
+
+.game-container {
+    position: relative;
+    width: 800px;
+    height: 400px;
+}
+
+.game {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #003366;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #e0f7fa; 
+    background-size: cover;
+}
+
+.game.weather-snow { 
+    background-color: #ffffff; 
+    background-image: url('img/snow.png'); 
+    background-size: 60%; 
+    background-position: 50% 30px; 
+    background-repeat: no-repeat; 
+}
+
+.game.weather-clouds { 
+    background-color: #f3f3f3; 
+    background-image: url('img/clouds.png'); 
+    background-size: 60%; 
+    background-position: 50% 30px; 
+    background-repeat: no-repeat; 
+}
+
+.game.weather-clear { 
+    background-color: #fbfbe8; 
+    background-image: url('img/sun.png'); 
+    background-size: 60%; 
+    background-position: 50% 30px; 
+    background-repeat: no-repeat; 
+}
+
+
+.penguin {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: 80px;
+    height: 100px;
+    background-image: url('img/Pinguino.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+
+#startScreen {
+    position: absolute;
+    top: -20px;  
+    left: 0;
+    width: 100%;
+    height: auto;
+    background: transparent;
+    z-index: 20;
+}
+
+
+#startButton, #restartButton {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #0055aa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    display: block;
+    margin: auto;
+    transition: background-color 0.3s ease;
+    position: relative;
+    top: -15px;   
+}
+
+#startButton:hover, #restartButton:hover { 
+    background-color: #003366; 
+}
+
+#gameOverText {
+    position: absolute;
+    top: -120px;
+    width: 100%;
+    text-align: center;
+    font-family: 'WinterDay';
+    font-size: 70px;
+    color: #003366;
+    text-shadow: 3px 3px 5px #ffffff;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+#gameOverText.show { 
+    opacity: 1; 
+}
+
+.hidden { display: none; }
+
+
+.falling { 
+    position: absolute; 
+    width: 40px; 
+    height: 40px; 
+}
+
+.fish {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background-image: url('img/fish.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.danger[data-shape="snow-square"] {
+    width: 30px;
+    height: 30px;
+    background: #FAF8F8;    
+    border: 3px solid #EDEDED;
+    border-radius: 50%;      
+    position: absolute;
+}
+
+.danger[data-shape="clouds-square"] {
+    width: 30px;
+    height: 30px;
+    background: #C0C0C0;   
+    border: 3px solid #999999;
+    border-radius: 50%;     
+    position: absolute;
+}
+
+.danger[data-shape="clear-square"] {
+    width: 30px;
+    height: 30px;
+    background: #EFFDFD;    
+    border: 3px solid #D4F6F7;
+    border-radius: 50%;      
+    position: absolute;
+}

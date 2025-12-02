@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jumping penguin</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+
+    <div class="weather-box">
+        <h2>Weather</h2>
+        <div id="weatherInfo">select a city</div>
+        <div class="city-buttons">
+            <button class="city-btn" data-city="Yakutsk, RU">Yakutsk</button>
+            <button class="city-btn" data-city="London, UK">London</button>
+           <button class="city-btn" data-city="Cape Town, ZA">Cape Town</button>
+        </div>
+    </div>
+
+    <div class="game-container">
+
+        <div id="startScreen">
+            <button id="startButton">START</button>
+        </div>
+
+        <div id="gameOverText" class="hidden">
+            <div>GAME OVER</div>
+            <button id="restartButton">RESTART</button>
+        </div>
+
+        <div class="game">
+            <div class="penguin"></div>
+        </div>
+
+    </div>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
